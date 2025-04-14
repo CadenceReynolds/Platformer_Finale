@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import static utilz.Constants.Directions.*;
 
 import main.Game;
+import utilz.Constants;
 
 public class Crabby extends Enemy {
 
@@ -16,39 +17,73 @@ public class Crabby extends Enemy {
 
     public Crabby(float x, float y) {
         super(x, y, CRABBY_WIDTH, CRABBY_HEIGHT, CRABBY);
-        // TODO: coming soon
-
+        initHitbox(22, 19);
+        initAttackBox();
     }
 
     private void initAttackBox() {
-        // TODO: coming soon
-
+        attackBox = new Rectangle2D.Float(x, y, (int) (82 * Constants.Game.SCALE), (int) (19 * Constants.Game.SCALE));
+        attackBoxOffsetX = (int) (Constants.Game.SCALE * 30);
     }
 
     public void update(int[][] lvlData, Player player) {
-        // TODO: coming soon
-
+        updateBehavior(lvlData, player);
+        updateAnimationTick();
+        updateAttackBox();
     }
 
     private void updateAttackBox() {
-        // TODO: coming soon
-
+        attackBox.x = (hitbox.x - attackBoxOffsetX);
+        attackBox.y = hitbox.y;
     }
 
     private void updateBehavior(int[][] lvlData, Player player) {
-        // TODO: coming soon
+        if (firstUpdate) {
+            firstUpdateCheck(lvlData);
+        }
+        if (inAir) {
+            updateInAir(lvlData);
+        } else {
+            switch (state) {
+                case IDLE:
+                    newState(RUNNING);
+                    break;
+                case RUNNING:
+                    if (canSeePlayer(lvlData, player)) {
+                        turnTowardsPlayer(player);
+                        if (isPlayerCloseForAttack(player))
+                            newState(ATTACK);
+                    }
 
+                    move(lvlData);
+                    break;
+                case ATTACK:
+                    if (aniIndex == 0)
+                        attackChecked = false;
+                    if (aniIndex == 3 && !attackChecked)
+                        checkPlayerHit(attackBox, player);
+                    break;
+                case HIT:
+                    break;
+            }
+        }
     }
 
     public int flipX() {
-        // TODO: coming soon
-        return 0;
+        if (walkDir == RIGHT) {
+            return width;
+        } else {
+            return 0;
+        }
 
     }
 
     public int flipW() {
-        // TODO: coming soon
-        return 0;
+        if (walkDir == RIGHT) {
+            return -1;
+        } else {
+            return 1;
+        }
 
     }
 }
