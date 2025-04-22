@@ -125,7 +125,6 @@ public class Playing extends State implements Statemethods {
     @Override
     public void draw(Graphics g) {
         g.drawImage(backgroundImg, 0, 0, Constants.Game.GAME_WIDTH, Constants.Game.GAME_HEIGHT, null);
-
         drawClouds(g);
 
         levelManager.draw(g, xLvlOffset);
